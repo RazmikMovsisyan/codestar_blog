@@ -20,7 +20,18 @@ def post_detail(request, slug):
 
     queryset = Post.objects.filter(status=1)
     post = get_object_or_404(queryset, slug=slug)
+    comments = post.comments.all().order_by("-created_on")
+    comment_count = post.comments.filter(approved=True).count()
 
+    return render(
+        request,
+        "blog/post_detail.html",
+        {
+            "post": post,
+            "comments": comments,
+            "comment_count": comment_count,
+        },
+    )
     return render(
         request,
         "blog/post_detail.html",
@@ -31,3 +42,4 @@ class PostList(generic.ListView):
     queryset = Post.objects.all()
     template_name = "blog/index.html"
     paginate_by = 6
+
